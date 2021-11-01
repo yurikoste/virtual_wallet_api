@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    command: bash -c "python /code/virtual_wallet_api/manage.py makemigrations --noinput &&
+             python /code/virtual_wallet_api/manage.py migrate --noinput &&
+             python /code/virtual_wallet_api/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code/virtual_wallet_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
