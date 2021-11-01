@@ -2,7 +2,20 @@
 This API will allow you to manage you virtual wallet. This API is created on the base of Django REST framework.
 
 ## Installation
+Repository can be clone from GitHub via command:
 
+```github
+git clone https://github.com/yurikoste/virtual_wallet_api.git
+```
+In order to build docker container you need installed [Docker Compose](https://docs.docker.com/compose/gettingstarted/) in your system. Go to the folder with project and use following command:
+
+```bash
+sudo docker-compose build
+```
+After building of the container you have to run it with:
+```bash
+sudo docker-compose up
+```
 
 ## Usage
 
