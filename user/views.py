@@ -46,7 +46,8 @@ class SignupView(GenericAPIView):
             })
 
 
-class LogoutView(GenericAPIView):
+# class LogoutView(GenericAPIView):
+class LogoutView(APIView):
     def post(self, request):
         refresh_token = RefreshToken(request.data.get('refresh'))
         refresh_token.blacklist()

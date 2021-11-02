@@ -9,7 +9,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VirtualWalletUser
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('id', 'first_name', 'last_name', 'username', 'email', 'password', 'birth_date')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
