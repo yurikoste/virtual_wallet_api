@@ -19,6 +19,10 @@ sudo docker-compose up
 
 ## Usage
 
+You can access to the swagger by following link:
+
+[http://0.0.0.0:8000/swagger/](http://0.0.0.0:8000/swagger/)
+
 
 
 ## Contributing
