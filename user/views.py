@@ -8,14 +8,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import CreateUserSerializer
 
 
-class HelloView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content, status=status.HTTP_200_OK)
-
-
 class SignupView(CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = CreateUserSerializer
