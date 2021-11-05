@@ -8,13 +8,6 @@ Repository can be clone from GitHub via command:
 git clone https://github.com/yurikoste/virtual_wallet_api.git
 ```
 
-Database parameters should be defined in .env file. As default setup you can use:
-```
-DB_NAME=postgres
-DB_USER_NAME=postgres
-DB_USER_PASSWORD=postgres
-DB_HOST=db
-```
 In order to build docker container you need installed [Docker Compose](https://docs.docker.com/compose/gettingstarted/) in your system.
 
 Following commands are relevant for Linux systems:
