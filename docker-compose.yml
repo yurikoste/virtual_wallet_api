@@ -12,11 +12,11 @@ services:
   web:
     build: .
     command: bash -c "/usr/local/bin/python -m pip install --upgrade pip &&
-             python /code/virtual_wallet_api/manage.py makemigrations --noinput &&
-             python /code/virtual_wallet_api/manage.py migrate --noinput &&
-             python /code/virtual_wallet_api/manage.py runserver 0.0.0.0:8000"
+             python /code/config/manage.py makemigrations --noinput &&
+             python /code/config/manage.py migrate --noinput &&
+             python /code/config/manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/code/virtual_wallet_api
+      - .:/code/config
     ports:
       - "8000:8000"
     depends_on:
