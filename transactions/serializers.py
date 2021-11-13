@@ -8,7 +8,6 @@ from .models import Transaction, Wallet
 from user.models import VirtualWalletUser
 
 
-from django.db import connection
 getcontext().prec = 2
 
 
