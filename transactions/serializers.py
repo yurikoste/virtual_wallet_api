@@ -1,4 +1,5 @@
 from django.db.transaction import atomic
+from django.db.models import F
 from rest_framework import serializers
 
 from decimal import Decimal, getcontext
@@ -21,8 +22,8 @@ class FillSerializer(serializers.ModelSerializer):
     def save(self, **validated_data):
         user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
         wallet = user.wallet
-        wallet.balance += Decimal(self.initial_data['value'])
-        wallet.save()
+        wallet.balance = F('balance') + Decimal(self.initial_data['value'])
+        wallet.save(update_fields=['balance'])
         transaction = Transaction.objects.create(wallet=wallet,
                                                  email=user.email,
                                                  type='payment_fill',
@@ -49,8 +50,8 @@ class WithdrawSerializer(serializers.ModelSerializer):
         wallet = user.wallet
         if wallet.balance < Decimal(self.initial_data['value']):
             raise serializers.ValidationError("Sorry, you don't have enough money in your wallet")
-        wallet.balance -= Decimal(self.initial_data['value'])
-        wallet.save()
+        wallet.balance = F('balance') - Decimal(self.initial_data['value'])
+        wallet.save(update_fields=['balance'])
         transaction = Transaction.objects.create(wallet=wallet,
                                                  email=user.email,
                                                  type='payment_withdraw',
@@ -83,11 +84,11 @@ class PaySerializer(serializers.ModelSerializer):
                 receiver = VirtualWalletUser.objects.get(email=self.initial_data['email'])
                 receiver_wallet = receiver.wallet
 
-                payer_wallet.balance -= Decimal(self.initial_data['value'])
-                receiver_wallet.balance += Decimal(self.initial_data['value'])
+                payer_wallet.balance = F('balance') - Decimal(self.initial_data['value'])
+                receiver_wallet.balance = F('balance') + Decimal(self.initial_data['value'])
 
-                payer_wallet.save()
-                receiver_wallet.save()
+                payer_wallet.save(update_fields=['balance'])
+                receiver_wallet.save(update_fields=['balance'])
 
                 payer_transaction = Transaction.objects.create(
                     wallet=payer_wallet,
