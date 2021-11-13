@@ -14,7 +14,7 @@ class Wallet(models.Model):
     )
 
     balance = models.DecimalField(default=0, max_digits=15, decimal_places=2)
-    currency = models.CharField(choices=currency_types, default='UAH', max_length=3)
+    last_used_currency = models.CharField(choices=currency_types, default='UAH', max_length=3)
 
     def __str__(self):
         return f"Wallet of {self.owner} with {self.balance}"
