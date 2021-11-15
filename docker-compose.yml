@@ -11,7 +11,8 @@ services:
       - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    command: bash -c "python /code/virtual_wallet_api/manage.py makemigrations --noinput &&
+    command: bash -c "/usr/local/bin/python -m pip install --upgrade pip &&
+             python /code/virtual_wallet_api/manage.py makemigrations --noinput &&
              python /code/virtual_wallet_api/manage.py migrate --noinput &&
              python /code/virtual_wallet_api/manage.py runserver 0.0.0.0:8000"
     volumes:

@@ -44,8 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Third-Party Apps
+    'rest_framework',
+    'drf_yasg',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
     # Local Apps
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +94,6 @@ DATABASES = {
         'USER': getenv('DB_USER_NAME'),
         'PASSWORD': getenv('DB_USER_PASSWORD'),
         'HOST': 'db',
-        # 'HOST': 'localhost',
         'PORT': 5432,
     }
 }
@@ -97,6 +101,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = 'user.VirtualWalletUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -113,6 +119,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+REST_FRAMEWORK = {
+  'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+  ),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
