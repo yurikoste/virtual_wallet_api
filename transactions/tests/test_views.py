@@ -115,16 +115,16 @@ class ViewsTesting(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_transaction_view_authenticated(self):
-        _transaction_view_test_template(self=self,
-                                        transaction_date=date.today(),
-                                        is_authenticated=True,
-                                        response_code=200)
+        _setup_transaction_view_test_template(self=self,
+                                              transaction_date=date.today(),
+                                              is_authenticated=True,
+                                              response_code=200)
 
     def test_transaction_view_not_authenticated(self):
-        _transaction_view_test_template(self=self,
-                                        transaction_date=date.today(),
-                                        is_authenticated=False,
-                                        response_code=403)
+        _setup_transaction_view_test_template(self=self,
+                                              transaction_date=date.today(),
+                                              is_authenticated=False,
+                                              response_code=403)
 
     def test_transaction_view_response_data(self):
         transaction_custom_date = str(date.today()-timedelta(days=1))
@@ -134,7 +134,7 @@ class ViewsTesting(TestCase):
              ('type', 'payment_withdraw'),
              ('value', value)]
         )]
-        _transaction_view_test_template(
+        _setup_transaction_view_test_template(
             self=self,
             transaction_date=transaction_custom_date,
             is_authenticated=True,
@@ -154,7 +154,11 @@ class ViewsTesting(TestCase):
         self.user.delete()
 
 
-def _fill_and_withdraw_template(self, view, value, user, endpoint, is_authenticated, response_code):
+def _setup_fill_and_withdraw_template(self, view, value, user, endpoint, is_authenticated, response_code):
+    """
+    Performs regular actions which are required for request creation, user authentication and response validation
+    during wallet fill and withdraw
+    """
     factory = APIRequestFactory()
 
     data = {
@@ -170,17 +174,21 @@ def _fill_and_withdraw_template(self, view, value, user, endpoint, is_authentica
 
 def _call_fill_view_test_template(self, value, user, endpoint, is_authenticated, response_code):
     view = FillWalletView.as_view()
-    _fill_and_withdraw_template(self, view, value, user, endpoint, is_authenticated, response_code)
+    _setup_fill_and_withdraw_template(self, view, value, user, endpoint, is_authenticated, response_code)
 
 
 def _call_withdraw_view_test_template(self, value, user, endpoint, is_authenticated, response_code):
     view = WithdrawWalletView.as_view()
-    _fill_and_withdraw_template(self, view, value, user, endpoint, is_authenticated, response_code)
+    _setup_fill_and_withdraw_template(self, view, value, user, endpoint, is_authenticated, response_code)
 
 
-def _transaction_view_test_template(
+def _setup_transaction_view_test_template(
         self, transaction_date, is_authenticated, response_code, value=None, response_data=None
 ):
+    """
+        Creates test data and performs regular actions which are required for request creation, user authentication and
+        response validation during wallet transactions
+    """
     factory = APIRequestFactory()
     view = TransactionsView.as_view()
 
