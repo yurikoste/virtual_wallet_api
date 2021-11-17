@@ -1,11 +1,10 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
-# from django.db.models import Sum
+from rest_framework import status
 
 from transactions.models import Wallet, Transaction
-# from transactions.serializers import TransactionSerializer
-from .serializers import WalletBalanceSerializer, ShowPeriodSummarySerializer
+from .serializers import WalletBalanceSerializer, PeriodSummarySerializer, PeriodAggregateSerializer
 from .services import convert_to_currency
 
 from pprint import pprint
@@ -29,15 +28,31 @@ class ShowBalanceWithCurrency(generics.RetrieveAPIView):
 
 class ShowSummaryForGivenPeriod(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = ShowPeriodSummarySerializer
+    serializer_class = PeriodSummarySerializer
 
     def get(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.save(
+        data = serializer.create(
             owner=request.user,
             start_date=self.request.GET['start_date'],
             end_date=self.request.GET['end_date'],
             currency=self.request.GET['currency'],
         )
-        return Response(data=data, status=200)
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class ShowAggregationForGivenPeriod(generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PeriodAggregateSerializer
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.create(
+            owner=request.user,
+            start_date=self.request.GET['start_date'],
+            end_date=self.request.GET['end_date'],
+            currency=self.request.GET['currency'],
+        )
+        return Response(data=data, status=status.HTTP_200_OK)

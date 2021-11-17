@@ -3,6 +3,7 @@ from django.db.transaction import atomic
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
+from rest_framework import status
 
 from .serializers import FillSerializer, WithdrawSerializer, PaySerializer, TransactionSerializer
 from .models import Transaction, Wallet
@@ -17,7 +18,7 @@ class FillWalletView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         transaction = serializer.save(owner=request.user)
         transaction.save()
-        return Response(data={'response': 'Successful fill'}, status=200)
+        return Response(data={'response': 'Successful fill'}, status=status.HTTP_200_OK)
 
 
 class WithdrawWalletView(generics.CreateAPIView):
@@ -29,7 +30,7 @@ class WithdrawWalletView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         transaction = serializer.save(owner=request.user)
         transaction.save()
-        return Response(data={'response': 'Successful withdraw'}, status=200)
+        return Response(data={'response': 'Successful withdraw'}, status=status.HTTP_200_OK)
 
 
 class PayWalletView(generics.CreateAPIView):
@@ -40,7 +41,7 @@ class PayWalletView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=request.user)
-        return Response(data={'response': 'Successful payment'}, status=200)
+        return Response(data={'response': 'Successful payment'}, status=status.HTTP_200_OK)
 
 
 class TransactionsView(generics.ListAPIView):
