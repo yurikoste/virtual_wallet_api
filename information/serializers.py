@@ -11,6 +11,7 @@ from .validators import SUPPORTED_CURRENCIES, validate_start_and_end_dates
 from .models import InformationForTransaction
 
 from pprint import pprint
+from django.db import connection
 
 
 class WalletBalanceSerializer(serializers.ModelSerializer):
@@ -34,8 +35,6 @@ class WalletBalanceSerializer(serializers.ModelSerializer):
 
 class PeriodSummarySerializer(serializers.ModelSerializer):
     class Meta:
-        # model = Transaction
-        # fields = ('value', 'type',)
         model = InformationForTransaction
         fields = ('last_used_currency',)
 
@@ -62,8 +61,6 @@ class PeriodSummarySerializer(serializers.ModelSerializer):
 
 class PeriodAggregateSerializer(serializers.ModelSerializer):
     class Meta:
-        # model = Transaction
-        # fields = ('value', 'type',)
         model = InformationForTransaction
         fields = ('last_used_currency',)
 

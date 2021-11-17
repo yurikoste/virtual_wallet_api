@@ -10,21 +10,9 @@ from .services import convert_to_currency
 from pprint import pprint
 
 
-# class ShowBalanceWithCurrency(generics.RetrieveAPIView):
 class ShowBalanceWithCurrency(generics.GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = WalletBalanceSerializer
-    # queryset = Wallet.objects.all()
-
-    # def get_object(self):
-    #     queryset = self.filter_queryset(self.get_queryset())
-    #     wallet = queryset.get(pk=self.request.user.pk)
-    #     wallet.balance = convert_to_currency(
-    #         value=wallet.balance,
-    #         currency_to_convert=self.request.GET['currency'],
-    #         default_currency='EUR'
-    #         )
-    #     return wallet
 
     def get(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
