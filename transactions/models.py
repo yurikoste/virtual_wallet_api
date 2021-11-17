@@ -4,7 +4,7 @@ from user.models import VirtualWalletUser
 
 class Wallet(models.Model):
     currency_types = (
-        ('UAH', 'UAH'),
+        ('CHF', 'CHF'),
         ('USD', 'USD'),
         ('EUR', 'EUR'),
     )

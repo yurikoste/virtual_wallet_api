@@ -7,22 +7,38 @@ from django.db.models import Sum
 from transactions.models import Wallet, Transaction
 from user.models import VirtualWalletUser
 from .services import convert_to_currency
+from .validators import SUPPORTED_CURRENCIES, validate_start_and_end_dates
+from .models import InformationForTransaction
 
 from pprint import pprint
 
 
 class WalletBalanceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Wallet
-        fields = ('balance',)
+        model = InformationForTransaction
+        fields = ('last_used_currency',)
+
+    def save(self, **validated_data):
+        user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
+        information, created = InformationForTransaction.objects.get_or_create(wallet_id=user.wallet.pk)
+        information.last_used_currency = validated_data['currency']
+        information.save(update_fields=['last_used_currency'])
+
+        data = {'balance': convert_to_currency(
+            value=user.wallet.balance,
+            currency_to_convert=validated_data['currency'],
+            default_currency='EUR'
+        )}
+        return data
 
 
-class PeriodSummarySerializer(serializers.Serializer):
+class PeriodSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ('value', 'type',)
 
     def create(self, **validated_data):
+        validate_start_and_end_dates(validated_data['start_date'], validated_data['end_date'])
         user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
         users_transactions = Transaction.objects.filter(
             wallet=user.wallet,
@@ -42,12 +58,13 @@ class PeriodSummarySerializer(serializers.Serializer):
         return data
 
 
-class PeriodAggregateSerializer(serializers.Serializer):
+class PeriodAggregateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ('value', 'type',)
 
     def create(self, **validated_data):
+        validate_start_and_end_dates(validated_data['start_date'], validated_data['end_date'])
         user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
         users_transactions = Transaction.objects.filter(
             wallet=user.wallet,
@@ -73,6 +90,7 @@ class PeriodAggregateSerializer(serializers.Serializer):
                         data[operation_type[0]].append(convert_to_currency(
                             value=transactions_sum['value__sum'],
                             currency_to_convert=validated_data['currency'],
+                            default_currency='EUR',
                         ))
                     else:
                         data[operation_type[0]].append(Decimal(0))
