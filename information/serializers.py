@@ -34,8 +34,10 @@ class WalletBalanceSerializer(serializers.ModelSerializer):
 
 class PeriodSummarySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Transaction
-        fields = ('value', 'type',)
+        # model = Transaction
+        # fields = ('value', 'type',)
+        model = InformationForTransaction
+        fields = ('last_used_currency',)
 
     def create(self, **validated_data):
         validate_start_and_end_dates(validated_data['start_date'], validated_data['end_date'])
@@ -60,8 +62,10 @@ class PeriodSummarySerializer(serializers.ModelSerializer):
 
 class PeriodAggregateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Transaction
-        fields = ('value', 'type',)
+        # model = Transaction
+        # fields = ('value', 'type',)
+        model = InformationForTransaction
+        fields = ('last_used_currency',)
 
     def create(self, **validated_data):
         validate_start_and_end_dates(validated_data['start_date'], validated_data['end_date'])
@@ -80,7 +84,6 @@ class PeriodAggregateSerializer(serializers.ModelSerializer):
         data = {operation_type[0]: [] for operation_type in Transaction.types}
         data['date'] = []
 
-        pprint(f"{data=}")
         for day in dates:
             day_transactions = Transaction.objects.filter(date=day)
             if day_transactions:

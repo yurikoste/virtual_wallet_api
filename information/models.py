@@ -14,8 +14,8 @@ class InformationForTransaction(models.Model):
     )
 
     last_used_currency = models.CharField(choices=currency_types, default='USD', max_length=3)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
+    # start_date = models.DateField(blank=True, null=True)
+    # end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f"Currency used for requests is {self.last_used_currency} "
