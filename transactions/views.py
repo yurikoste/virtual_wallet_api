@@ -51,8 +51,8 @@ class TransactionsView(generics.ListAPIView):
         user_wallet = Wallet.objects.get(owner=self.request.user)
         users_transactions = Transaction.objects.filter(
             wallet=user_wallet,
-            date__lte=self.request.GET['start_date'],
-            date__gte=self.request.GET['end_date']
+            date__gte=self.request.GET['start_date'],
+            date__lte=self.request.GET['end_date']
         )
         return Transaction.objects.filter(id__in=users_transactions)
 
