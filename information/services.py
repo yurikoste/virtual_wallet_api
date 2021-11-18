@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, getcontext
 import requests
 from django.core.cache import cache as cache
 from config.settings import EXCHANGE_API_URL, EXCHANGE_API_KEY, DEFAULT_CURRENCY
@@ -6,13 +6,15 @@ from config.settings import EXCHANGE_API_URL, EXCHANGE_API_KEY, DEFAULT_CURRENCY
 from.validators import validate_currency_type
 
 
-def convert_to_currency(value: float, currency_to_convert: str, default_currency=DEFAULT_CURRENCY) -> Decimal:
+def convert_to_currency(value: Decimal, currency_to_convert: str, default_currency=DEFAULT_CURRENCY) -> Decimal:
     """
     Returns wallet balance converted to a given currency
     """
+    getcontext().prec = 28
     rates = _get_conversion_rates()
     validate_currency_type(currency_to_convert)
-    return Decimal(value*Decimal(rates[currency_to_convert])).quantize(Decimal('.01'))
+    return (value*Decimal(rates[currency_to_convert])).quantize(Decimal('.01'))
+    # return Decimal(value*Decimal(rates[currency_to_convert])).quantize(Decimal('.01'))
 
 
 def _get_conversion_rates() -> dict:
