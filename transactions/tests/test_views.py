@@ -116,13 +116,15 @@ class ViewsTesting(TestCase):
 
     def test_transaction_view_authenticated(self):
         _setup_transaction_view_test_template(self=self,
-                                              transaction_date=date.today(),
+                                              transaction_start_date=date.today(),
+                                              transaction_end_date=date.today(),
                                               is_authenticated=True,
                                               response_code=200)
 
     def test_transaction_view_not_authenticated(self):
         _setup_transaction_view_test_template(self=self,
-                                              transaction_date=date.today(),
+                                              transaction_start_date=date.today(),
+                                              transaction_end_date=date.today(),
                                               is_authenticated=False,
                                               response_code=403)
 
@@ -136,7 +138,8 @@ class ViewsTesting(TestCase):
         )]
         _setup_transaction_view_test_template(
             self=self,
-            transaction_date=transaction_custom_date,
+            transaction_start_date=transaction_custom_date,
+            transaction_end_date=transaction_custom_date,
             is_authenticated=True,
             response_code=200,
             response_data=response_data,
@@ -183,7 +186,7 @@ def _call_withdraw_view_test_template(self, value, user, endpoint, is_authentica
 
 
 def _setup_transaction_view_test_template(
-        self, transaction_date, is_authenticated, response_code, value=None, response_data=None
+        self, transaction_start_date, transaction_end_date, is_authenticated, response_code, value=None, response_data=None
 ):
     """
         Creates test data and performs regular actions which are required for request creation, user authentication and
@@ -215,12 +218,12 @@ def _setup_transaction_view_test_template(
         )
 
         transaction_yesterday = Transaction.objects.get(value=value)
-        transaction_yesterday.date = str(transaction_date)
+        transaction_yesterday.date = str(transaction_start_date)
         transaction_yesterday.save(update_fields=['date'])
 
     endpoint = f"http://0.0.0.0:8000/api/v1/transactions/?" \
-               f"start_date={str(transaction_date)}&" \
-               f"end_date={str(transaction_date)}"
+               f"start_date={str(transaction_start_date)}&" \
+               f"end_date={str(transaction_end_date)}"
     request = factory.get(endpoint)
     if is_authenticated:
         force_authenticate(request, user=self.user)
