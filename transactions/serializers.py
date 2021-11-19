@@ -2,13 +2,10 @@ from django.db.transaction import atomic
 from django.db.models import F
 from rest_framework import serializers
 
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 from .models import Transaction, Wallet
 from user.models import VirtualWalletUser
-
-
-getcontext().prec = 2
 
 
 class FillSerializer(serializers.ModelSerializer):
@@ -123,7 +120,3 @@ class TransactionSerializer(serializers.Serializer):
     date = serializers.DateField()
     type = serializers.CharField()
     value = serializers.DecimalField(max_digits=15, decimal_places=2)
-
-
-
-

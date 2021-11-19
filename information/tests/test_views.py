@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from rest_framework.test import force_authenticate, APIRequestFactory
-from decimal import Decimal, getcontext
+from decimal import Decimal
 from collections import OrderedDict
 from datetime import date, timedelta
 from unittest.mock import patch

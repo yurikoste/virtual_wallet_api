@@ -22,7 +22,6 @@ class ViewsTesting(TestCase):
         self.wallet = Wallet.objects.create(
             owner=self.user,
             balance='100',
-            # last_used_currency='UAH'
         )
 
         self.client = Client()
@@ -101,7 +100,6 @@ class ViewsTesting(TestCase):
         receiver_wallet = Wallet.objects.create(
             owner=receiver,
             balance='100',
-            # last_used_currency='UAH'
         )
 
         data = {
