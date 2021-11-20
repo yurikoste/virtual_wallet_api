@@ -23,10 +23,10 @@ def _get_conversion_rates() -> dict:
     if cache.get('rates'):
         return cache.get('rates')
     else:
-        exchange_api_url = EXCHANGE_API_URL
-        exchange_api_key = EXCHANGE_API_KEY
-        url = f"http://api.exchangeratesapi.io/v1/latest?access_key={EXCHANGE_API_KEY}"
-        request_results = requests.get(url).json()
+        # exchange_api_url = EXCHANGE_API_URL
+        # exchange_api_key = EXCHANGE_API_KEY
+        # url = f"{EXCHANGE_API_URL}access_key={EXCHANGE_API_KEY}"
+        request_results = requests.get(f"{EXCHANGE_API_URL}access_key={EXCHANGE_API_KEY}").json()
         cache.set('rates', request_results['rates'])
         return request_results['rates']
 

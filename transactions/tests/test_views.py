@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from django.test import TestCase, Client
 from rest_framework.test import force_authenticate, APIRequestFactory
+from rest_framework import status
 
 from user.models import VirtualWalletUser
 from transactions.models import Wallet, Transaction
@@ -32,7 +33,7 @@ class ViewsTesting(TestCase):
                                       endpoint="/api/v1/transactions/fill/",
                                       user=self.user,
                                       is_authenticated=False,
-                                      response_code=403
+                                      response_code=status.HTTP_403_FORBIDDEN
                                       )
 
     def test_fill_zero(self):
@@ -41,7 +42,7 @@ class ViewsTesting(TestCase):
                                       endpoint="/api/v1/transactions/fill/",
                                       user=self.user,
                                       is_authenticated=True,
-                                      response_code=400
+                                      response_code=status.HTTP_400_BAD_REQUEST
                                       )
 
     def test_fill(self):
@@ -50,7 +51,7 @@ class ViewsTesting(TestCase):
                                       endpoint="/api/v1/transactions/fill/",
                                       user=self.user,
                                       is_authenticated=True,
-                                      response_code=200
+                                      response_code=status.HTTP_200_OK
                                       )
 
     def test_withdraw_without_auth(self):
@@ -59,7 +60,7 @@ class ViewsTesting(TestCase):
                                           endpoint="/api/v1/transactions/withdraw/",
                                           user=self.user,
                                           is_authenticated=False,
-                                          response_code=403)
+                                          response_code=status.HTTP_403_FORBIDDEN)
 
     def test_withdraw_zero(self):
         _call_withdraw_view_test_template(self=self,
@@ -67,7 +68,7 @@ class ViewsTesting(TestCase):
                                           endpoint="/api/v1/transactions/withdraw/",
                                           user=self.user,
                                           is_authenticated=True,
-                                          response_code=400)
+                                          response_code=status.HTTP_400_BAD_REQUEST)
 
     def test_withdraw_too_many(self):
         _call_withdraw_view_test_template(self=self,
@@ -75,7 +76,7 @@ class ViewsTesting(TestCase):
                                           endpoint="/api/v1/transactions/withdraw/",
                                           user=self.user,
                                           is_authenticated=True,
-                                          response_code=400)
+                                          response_code=status.HTTP_400_BAD_REQUEST)
 
     def test_withdraw(self):
         _call_withdraw_view_test_template(self=self,
@@ -83,7 +84,7 @@ class ViewsTesting(TestCase):
                                           endpoint="/api/v1/transactions/withdraw/",
                                           user=self.user,
                                           is_authenticated=True,
-                                          response_code=200)
+                                          response_code=status.HTTP_200_OK)
 
     def test_pay_view(self):
         factory = APIRequestFactory()
@@ -110,21 +111,21 @@ class ViewsTesting(TestCase):
         request = factory.post('/api/v1/transactions/pay/', data)
         force_authenticate(request, user=self.user)
         response = view(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_transaction_view_authenticated(self):
         _setup_transaction_view_test_template(self=self,
                                               transaction_start_date=date.today(),
                                               transaction_end_date=date.today(),
                                               is_authenticated=True,
-                                              response_code=200)
+                                              response_code=status.HTTP_200_OK)
 
     def test_transaction_view_not_authenticated(self):
         _setup_transaction_view_test_template(self=self,
                                               transaction_start_date=date.today(),
                                               transaction_end_date=date.today(),
                                               is_authenticated=False,
-                                              response_code=403)
+                                              response_code=status.HTTP_403_FORBIDDEN)
 
     def test_transaction_view_response_data(self):
         transaction_custom_date = str(date.today()-timedelta(days=1))
@@ -139,7 +140,7 @@ class ViewsTesting(TestCase):
             transaction_start_date=transaction_custom_date,
             transaction_end_date=transaction_custom_date,
             is_authenticated=True,
-            response_code=200,
+            response_code=status.HTTP_200_OK,
             response_data=response_data,
             value=value
         )
