@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from decimal import Decimal
 
-from .models import Transaction, Wallet
+from .models import Transaction
 from user.models import VirtualWalletUser
 
 
@@ -18,15 +18,16 @@ class FillSerializer(serializers.ModelSerializer):
         return transaction
 
     def save(self, **validated_data):
-        user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
-        wallet = user.wallet
-        wallet.balance = F('balance') + Decimal(self.initial_data['value'])
-        wallet.save(update_fields=['balance'])
-        transaction = Transaction.objects.create(wallet=wallet,
-                                                 email=user.email,
-                                                 type='payment_fill',
-                                                 value=Decimal(self.initial_data['value']))
-        return transaction
+        with atomic():
+            user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
+            wallet = user.wallet
+            wallet.balance = F('balance') + Decimal(self.initial_data['value'])
+            wallet.save(update_fields=['balance'])
+            transaction = Transaction.objects.create(wallet=wallet,
+                                                     email=user.email,
+                                                     type='payment_fill',
+                                                     value=Decimal(self.initial_data['value']))
+            return transaction
 
     @staticmethod
     def validate_value(value):
@@ -44,17 +45,18 @@ class WithdrawSerializer(serializers.ModelSerializer):
         return transaction
 
     def save(self, **validated_data):
-        user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
-        wallet = user.wallet
-        if wallet.balance < Decimal(self.initial_data['value']):
-            raise serializers.ValidationError("Sorry, you don't have enough money in your wallet")
-        wallet.balance = F('balance') - Decimal(self.initial_data['value'])
-        wallet.save(update_fields=['balance'])
-        transaction = Transaction.objects.create(wallet=wallet,
-                                                 email=user.email,
-                                                 type='payment_withdraw',
-                                                 value=Decimal(self.initial_data['value']))
-        return transaction
+        with atomic():
+            user = VirtualWalletUser.objects.get(pk=validated_data['owner'].id)
+            wallet = user.wallet
+            if wallet.balance < Decimal(self.initial_data['value']):
+                raise serializers.ValidationError("Sorry, you don't have enough money in your wallet")
+            wallet.balance = F('balance') - Decimal(self.initial_data['value'])
+            wallet.save(update_fields=['balance'])
+            transaction = Transaction.objects.create(wallet=wallet,
+                                                     email=user.email,
+                                                     type='payment_withdraw',
+                                                     value=Decimal(self.initial_data['value']))
+            return transaction
 
     @staticmethod
     def validate_value(value):
@@ -110,10 +112,12 @@ class PaySerializer(serializers.ModelSerializer):
         if Decimal(value) <= 0:
             raise serializers.ValidationError("You have to define payment value bigger then 0")
 
-    @staticmethod
-    def validate_email(email):
+    def validate_email(self, email):
         if not VirtualWalletUser.objects.filter(email=email):
             raise serializers.ValidationError("There is no payment receiver with such email. Please, check it")
+        if email == self.context['request'].user.email:
+            raise serializers.ValidationError("You can not pay to yourself. "
+                                              "Use 'Fill' operation to put money on your wallet")
 
 
 class TransactionSerializer(serializers.Serializer):

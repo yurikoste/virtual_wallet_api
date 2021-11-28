@@ -4,14 +4,11 @@ from decimal import Decimal
 from rest_framework import serializers
 from django.db.models import Sum
 
-from transactions.models import Wallet, Transaction
+from transactions.models import Transaction
 from user.models import VirtualWalletUser
 from .services import convert_to_currency
-from .validators import SUPPORTED_CURRENCIES, validate_start_and_end_dates
+from .validators import validate_start_and_end_dates
 from .models import InformationForTransaction
-
-from pprint import pprint
-from django.db import connection
 
 
 class WalletBalanceSerializer(serializers.ModelSerializer):
