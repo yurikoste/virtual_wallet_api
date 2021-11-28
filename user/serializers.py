@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from . models import VirtualWalletUser
+from transactions.models import Wallet
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -14,7 +15,5 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user = VirtualWalletUser.objects.create(**validated_data)
         user.set_password(validated_data['password'])
         user.save()
+        Wallet.objects.create(owner=user)
         return user
-
-
-
