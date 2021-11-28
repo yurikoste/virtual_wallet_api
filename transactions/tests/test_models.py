@@ -19,14 +19,14 @@ class ModelsTest(TestCase):
         self.wallet = Wallet.objects.create(
             owner=self.user,
             balance='111',
-            last_used_currency='UAH'
+            # last_used_currency='UAH'
         )
 
     def test_Transaction_model(self):
         self.wallet = Wallet.objects.create(
             owner=self.user,
             balance='111',
-            last_used_currency='UAH'
+            # last_used_currency='UAH'
         )
         transaction = Transaction.objects.create(
             wallet=self.wallet,

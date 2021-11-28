@@ -3,18 +3,10 @@ from user.models import VirtualWalletUser
 
 
 class Wallet(models.Model):
-    currency_types = (
-        ('UAH', 'UAH'),
-        ('USD', 'USD'),
-        ('EUR', 'EUR'),
-    )
-
     owner = models.OneToOneField(
         VirtualWalletUser, on_delete=models.CASCADE, related_name="wallet", verbose_name='Wallet'
     )
-
     balance = models.DecimalField(default=0, max_digits=15, decimal_places=2)
-    last_used_currency = models.CharField(choices=currency_types, default='UAH', max_length=3)
 
     def __str__(self):
         return f"Wallet of {self.owner} with {self.balance}"
