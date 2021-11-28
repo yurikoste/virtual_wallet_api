@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 from rest_framework import serializers
 from django.db.models import Sum
