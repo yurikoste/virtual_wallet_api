@@ -1,13 +1,9 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from transactions.models import Wallet, Transaction
 from .serializers import WalletBalanceSerializer, PeriodSummarySerializer, PeriodAggregateSerializer
-from .services import convert_to_currency
-
-from pprint import pprint
 
 
 class ShowBalanceWithCurrency(generics.GenericAPIView):

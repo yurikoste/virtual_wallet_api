@@ -1,7 +1,8 @@
-from information.models import InformationForTransaction
 from rest_framework import serializers
+from information.models import CURRENCY_TYPES
 
-SUPPORTED_CURRENCIES = [currency[0] for currency in InformationForTransaction.currency_types]
+
+SUPPORTED_CURRENCIES = [currency[0] for currency in CURRENCY_TYPES]
 
 
 def validate_currency_type(currency: str) -> None:
